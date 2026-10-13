@@ -20,6 +20,26 @@ class PagesTests(TestCase):
 
     def test_unknown_url_returns_404(self):
         self.assertEqual(self.client.get("/nope/").status_code, 404)
-        
+
     def test_post_not_allowed_on_home(self):
         self.assertEqual(self.client.post("/").status_code, 405)
+
+
+
+
+
+class HomeworkTests(TestCase):
+    def test_about_page(self):
+        response = self.client.get("/about/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "About")
+
+    def test_add_returns_sum_as_json(self):
+        response = self.client.get("/api/add/2/3/")
+        self.assertEqual(response.json(), {"result": 5})
+
+    def test_add_with_non_number_is_404(self):
+        self.assertEqual(self.client.get("/api/add/a/3/").status_code, 404)
+
+    def test_add_negative_not_matched_by_int(self):
+        self.assertEqual(self.client.get("/api/add/-1/3/").status_code, 404)
